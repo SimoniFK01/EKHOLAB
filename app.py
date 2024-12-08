@@ -17,8 +17,8 @@ headers = {
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
+    return "Hello, Flask no Render!"
+    
 # Exemplo de busca no Supabase
 @app.route('/get_data', methods=['GET'])
 def get_data():
