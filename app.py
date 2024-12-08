@@ -1,24 +1,47 @@
-from flask import Flask
-from supabase import create_client, Client
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
+import psycopg2
+from psycopg2.extras import DictCursor
 import os
 
 app = Flask(__name__)
+CORS(app)
 
-# Configuração do Supabase
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://xuvjvmysjudwgkkjelca.supabase.co")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+# Configurações do Banco de Dados
+db_config = {
+    "host": "aws-0-sa-east-1.pooler.supabase.com",
+    "user": "postgres",
+    "password": "Ff456123!",  # Substitua por sua senha
+    "database": "postgres",
+    "port": 6543
+}
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Testar a Conexão com o Banco de Dados
+def test_db_connection():
+    try:
+        conn = psycopg2.connect(**db_config)
+        cursor = conn.cursor(cursor_factory=DictCursor)
+        cursor.execute("SELECT 1;")  # Consulta simples para testar
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return result[0] == 1
+    except Exception as e:
+        print(f"Erro ao conectar ao banco de dados: {e}")
+        return False
 
-# Teste de Conexão
+# Rota Principal (Renderiza a Tela Inicial)
 @app.route('/')
 def index():
-    try:
-        # Apenas teste de conexão ao Supabase
-        response = supabase.table("itens_romaneio").select("*").limit(1).execute()
-        return "Conexão bem-sucedida com Supabase!", 200
-    except Exception as e:
-        return f"Erro ao conectar ao Supabase: {str(e)}", 500
+    return render_template('index.html')
+
+# Rota para Testar Conexão com o Banco de Dados
+@app.route('/test-db', methods=['GET'])
+def test_db():
+    if test_db_connection():
+        return jsonify({"status": "success", "message": "Conexão com o banco de dados bem-sucedida!"}), 200
+    else:
+        return jsonify({"status": "error", "message": "Erro ao conectar ao banco de dados."}), 500
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
