@@ -1,22 +1,24 @@
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
+from flask import Flask
 from supabase import create_client, Client
 import os
 
 app = Flask(__name__)
-CORS(app)
 
-# Configurações do Supabase
+# Configuração do Supabase
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://xuvjvmysjudwgkkjelca.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Rota Principal (Renderiza a Tela Inicial)
+# Teste de Conexão
 @app.route('/')
 def index():
-    return render_template('index.html')
-
+    try:
+        # Apenas teste de conexão ao Supabase
+        response = supabase.table("itens_romaneio").select("*").limit(1).execute()
+        return "Conexão bem-sucedida com Supabase!", 200
+    except Exception as e:
+        return f"Erro ao conectar ao Supabase: {str(e)}", 500
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
