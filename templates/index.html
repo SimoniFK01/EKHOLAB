@@ -8,12 +8,26 @@
 <body>
     <h1>Bem-vindo ao Supabase com Flask</h1>
     <button onclick="fetchData()">Buscar Dados</button>
+    <button onclick="addData()">Adicionar Dados</button>
 
     <script>
         async function fetchData() {
             const response = await fetch('/get_data');
             const data = await response.json();
             console.log(data);
+        }
+
+        async function addData() {
+            const data = [
+                { coluna1: "valor1", coluna2: "valor2", coluna3: "valor3", coluna4: "valor4" }
+            ];
+            const response = await fetch('/add_data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            console.log(result);
         }
     </script>
 </body>
