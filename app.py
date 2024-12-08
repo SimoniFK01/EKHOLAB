@@ -1,23 +1,21 @@
 from flask import Flask, request, jsonify, render_template
-import pymysql
 from flask_cors import CORS
+from supabase import create_client, Client
 import os
 
 app = Flask(__name__)
-CORS(app)  # Permite requisições de outros domínios (Cross-Origin Resource Sharing)
+CORS(app)
 
-# Configurações do Banco de Dados
-db_config = {
-    "host": os.getenv("DB_HOST", "aws-0-sa-east-1.pooler.supabase.com"),
-    "user": os.getenv("DB_USER", "postgres.hotzezvnfvepcmgbybkj"),
-    "password": os.getenv("DB_PASSWORD", "Ff456123!"),
-    "database": os.getenv("DB_NAME", "postgres")
-}
+# Configurações do Supabase
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://xuvjvmysjudwgkkjelca.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Rota Principal (Renderiza a Tela Inicial)
 @app.route('/')
 def index():
-    return render_template('index.html')  # Serve o arquivo index.html
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
