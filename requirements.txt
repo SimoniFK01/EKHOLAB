@@ -1,4 +1,4 @@
 Flask==2.3.2
 Flask-Cors==3.0.10
+psycopg2==2.x.x
 gunicorn==21.2.0
-supabase-py==0.0.2
